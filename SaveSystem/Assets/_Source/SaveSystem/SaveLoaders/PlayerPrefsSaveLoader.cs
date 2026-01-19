@@ -27,6 +27,10 @@ namespace SaveSystem.SaveLoaders
             {
                 PlayerPrefs.SetString(key, (string)(object)data);
             }
+            else
+            {
+                PlayerPrefs.SetString(key, JsonUtility.ToJson(data));
+            }
         }
 
         /// <param name="result"></param>
@@ -57,7 +61,8 @@ namespace SaveSystem.SaveLoaders
                 return true;
             }
 
-            result = default;
+            result = JsonUtility.FromJson<T>(PlayerPrefs.GetString(key));
+            
             return true;
         }
     }

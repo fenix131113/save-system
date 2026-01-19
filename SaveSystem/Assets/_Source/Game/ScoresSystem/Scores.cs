@@ -8,7 +8,7 @@ namespace Game.ScoresSystem
     {
         private const string SAVE_SCORES_KEY = "scores";
         
-        private int _scores;
+        private int _scoreCount;
         private ISaveLoader _saveLoader;
 
         public event Action OnScoresChanged;
@@ -20,24 +20,32 @@ namespace Game.ScoresSystem
             _saveLoader = saveLoader;
         }
 
-        public int GetScores() => _scores;
+        public int GetScores() => _scoreCount;
 
         public void IncreaseScores(int value = 1)
         {
-            _scores += value;
+            _scoreCount += value;
             OnScoresChanged?.Invoke();
             Save(); 
         }
 
         public void Load()
         {
-            if (_saveLoader.TryLoad<int>(out var result, SAVE_SCORES_KEY))
-                _scores = result;
+            if (_saveLoader.TryLoad<ScoreModel>(out var result, SAVE_SCORES_KEY))
+                _scoreCount = result.Score;
         }
 
         public void Save()
         {
-            _saveLoader.Save(_scores, SAVE_SCORES_KEY); // TODO: maybe add auto-key resolver. Auto place key or file path or null? depends on saver type. Add overload for save class with auto-resolver type instead of key
+            _saveLoader.Save(new ScoreModel(_scoreCount), SAVE_SCORES_KEY); // TODO: maybe add auto-key resolver. Auto place key or file path or null? depends on saver type. Add overload for save class with auto-resolver type instead of key
+        }
+
+        [Serializable]
+        private class ScoreModel
+        {
+            public readonly int Score;
+
+            public ScoreModel(int score) => Score = score;
         }
     }
 }

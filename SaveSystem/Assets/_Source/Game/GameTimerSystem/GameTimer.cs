@@ -25,12 +25,20 @@ namespace Game.GameTimerSystem
 
         public void Load()
         {
-            _saveLoader.TryLoad(out _timer, TIME_SAVE_KEY);
+            if (_saveLoader.TryLoad(out TimerModel model, TIME_SAVE_KEY))
+                _timer = model.Time;
         }
 
         public void Save()
         {
-            _saveLoader.Save(_timer + Time.time, TIME_SAVE_KEY);
+            _saveLoader.Save(new TimerModel(_timer + Time.time), TIME_SAVE_KEY);
+        }
+
+        private class TimerModel
+        {
+            public readonly float Time;
+
+            public TimerModel(float time) => Time = time;
         }
     }
 }
