@@ -15,9 +15,11 @@ namespace Game.Core
         
         private ISaveLoader _saveLoader;
         private Scores _scores;
+        private GameSaveLoader _gameSaveLoader;
 
         private void Awake()
         {
+            
             _saveLoader = new PlayerPrefsSaveLoader();
             
             _scores = new Scores();
@@ -27,6 +29,9 @@ namespace Game.Core
             scoresLabel.Construct(_scores);
             
             gameTimer.Construct(_saveLoader);
+            
+            _gameSaveLoader = new GameSaveLoader(_scores, gameTimer);
+            _gameSaveLoader.Load();
         }
     }
 }
