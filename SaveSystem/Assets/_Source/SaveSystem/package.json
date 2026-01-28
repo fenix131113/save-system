@@ -1,12 +1,13 @@
 {
   "name": "fenix131113.save-system",
   "displayName": "Save/Load System",
-  "version": "0.1",
+  "version": "1.0.0",
   "unity": "6000.2",
   "description": "Flexible save/load system for your project",
   "keywords": ["load", "save", "system"],
   "license": "Creative Commons BY-NC 4.0",
-  "documentationUrl": "",
-  "changelogUrl": "",
-  "licensesUrl": "https://creativecommons.org/licenses/by-nc/4.0/legalcode.en"
+  "licensesUrl": "https://creativecommons.org/licenses/by-nc/4.0/legalcode.en",
+  "author": {
+    "name": "fenix131113"
+  }
 }
