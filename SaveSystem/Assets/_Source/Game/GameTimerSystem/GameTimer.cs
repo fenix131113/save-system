@@ -1,4 +1,5 @@
-﻿using Game.Core.Saves;
+﻿using System;
+using Game.Core.Saves;
 using SaveSystem;
 using UnityEngine;
 
@@ -26,7 +27,7 @@ namespace Game.GameTimerSystem
         public void Load()
         {
             if (_saveLoader.TryLoad(out TimerModel model, TIME_SAVE_KEY))
-                _timer = model.Time;
+                _timer = model.time;
         }
 
         public void Save()
@@ -34,11 +35,12 @@ namespace Game.GameTimerSystem
             _saveLoader.Save(new TimerModel(_timer + Time.time), TIME_SAVE_KEY);
         }
 
+        [Serializable]
         private class TimerModel
         {
-            public readonly float Time;
+            public float time;
 
-            public TimerModel(float time) => Time = time;
+            public TimerModel(float time) => this.time = time;
         }
     }
 }

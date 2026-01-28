@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace SaveSystem.SaveLoaders
 {
@@ -10,7 +11,7 @@ namespace SaveSystem.SaveLoaders
         {
             if (key == null || data == null)
                 return;
-            
+
             if (typeof(T) == typeof(float))
             {
                 PlayerPrefs.SetFloat(key, (float)(object)data);
@@ -29,15 +30,26 @@ namespace SaveSystem.SaveLoaders
             }
             else
             {
-                PlayerPrefs.SetString(key, JsonUtility.ToJson(data));
+                try
+                {
+                    var converter = SaveLoadConverterRegistry.GetConverter(typeof(T));
+                    var serialized = converter == null ? JsonUtility.ToJson(data) : converter.Serialize(data);
+
+                    PlayerPrefs.SetString(key, serialized);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"Error when trying to parse save {typeof(T)}: " + e);
+                    throw;
+                }
             }
         }
 
         /// <param name="result"></param>
         /// <param name="key">Save key</param>
-        public bool TryLoad<T>(out T result, string key = null) //TODO: add custom convertor system for complex classes
+        public bool TryLoad<T>(out T result, string key = null)
         {
-            if (key == null)
+            if (key == null || !PlayerPrefs.HasKey(key))
             {
                 result = default;
                 return false;
@@ -61,8 +73,21 @@ namespace SaveSystem.SaveLoaders
                 return true;
             }
 
-            result = JsonUtility.FromJson<T>(PlayerPrefs.GetString(key));
-            
+            try
+            {
+                var converter = SaveLoadConverterRegistry.GetConverter(typeof(T));
+                var data = PlayerPrefs.GetString(key);
+
+                var deserialized = converter == null ? JsonUtility.FromJson<T>(data) : (T)converter.Deserialize(data);
+
+                result = deserialized;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Error when trying to parse load {typeof(T)}: " + e);
+                throw;
+            }
+
             return true;
         }
     }

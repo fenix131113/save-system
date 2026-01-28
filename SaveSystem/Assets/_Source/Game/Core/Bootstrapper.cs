@@ -19,7 +19,6 @@ namespace Game.Core
 
         private void Awake()
         {
-            
             _saveLoader = new PlayerPrefsSaveLoader();
             
             _scores = new Scores();

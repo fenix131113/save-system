@@ -1,6 +1,7 @@
 ﻿using System;
 using Game.Core.Saves;
 using SaveSystem;
+using UnityEngine;
 
 namespace Game.ScoresSystem
 {
@@ -32,7 +33,7 @@ namespace Game.ScoresSystem
         public void Load()
         {
             if (_saveLoader.TryLoad<ScoreModel>(out var result, SAVE_SCORES_KEY))
-                _scoreCount = result.Score;
+                _scoreCount = result.score;
         }
 
         public void Save()
@@ -43,9 +44,22 @@ namespace Game.ScoresSystem
         [Serializable]
         private class ScoreModel
         {
-            public readonly int Score;
+            public int score;
 
-            public ScoreModel(int score) => Score = score;
+            public ScoreModel(int score) => this.score = score;
+        }
+
+        private class ScoresConverter : SaveLoadConverter<ScoreModel>
+        {
+            protected override string SerializeTyped(ScoreModel obj)
+            {
+                return JsonUtility.ToJson(obj);
+            }
+
+            protected override ScoreModel DeserializeTyped(string data)
+            {
+                return JsonUtility.FromJson<ScoreModel>(data);
+            }
         }
     }
 }
